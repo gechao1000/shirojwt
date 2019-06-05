@@ -3,8 +3,10 @@ package com.example.demo.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.compression.DefaultCompressionCodecResolver;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.bind.DatatypeConverter;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -15,6 +17,7 @@ import java.util.UUID;
  * @author gexc
  * @date 2019/06/05
  */
+@Slf4j
 public class JwtUtil {
 
     public static final String SECRET_KEY = "?::4343fdf4fdf6cvf):";
@@ -38,7 +41,7 @@ public class JwtUtil {
         return jwtBuilder.compact();
     }
 
-    public static Map parserJWT(String token) {
+    public static Claims parserJWT(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
                 .parseClaimsJws(token)

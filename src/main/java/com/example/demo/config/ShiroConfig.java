@@ -43,6 +43,7 @@ public class ShiroConfig {
         filters.put("jwt", new JwtFilter());
         // filter chain
         Map<String, String> filterChain = new LinkedHashMap<>(16);
+        filterChain.put("/token", "anon");
         filterChain.put("/**", "jwt");
 
         shiroFilterFactoryBean.setFilters(filters);

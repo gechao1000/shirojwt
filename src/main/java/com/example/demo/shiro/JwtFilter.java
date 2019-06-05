@@ -26,9 +26,9 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         if (isLoginAttempt(request, response)) {
             try {
                 // token是否有效
-                this.executeLogin(request, response);
+                return this.executeLogin(request, response);
             } catch (Exception e) {
-                log.error("ExecuteLogin:", e);
+                log.error(e.getMessage());
                 return false;
             }
         } else {
@@ -37,7 +37,6 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             log.info("当前请求 {} Authorization属性(Token)为空 请求类型 {}", req.getRequestURI(), req.getMethod());
             return false;
         }
-        return true;
     }
 
     @Override

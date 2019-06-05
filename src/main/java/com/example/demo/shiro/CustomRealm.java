@@ -1,5 +1,8 @@
 package com.example.demo.shiro;
 
+import com.example.demo.util.JwtUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.MalformedJwtException;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -30,6 +33,8 @@ public class CustomRealm extends AuthorizingRealm {
         if (principals == null) {
             throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
         }
+
+        String payload = (String) principals.getPrimaryPrincipal();
 //        User user = (User) getAvailablePrincipal(principals);
         Set<String> roles = new LinkedHashSet<>();
         roles.add("admin");
@@ -42,10 +47,21 @@ public class CustomRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-        String username = upToken.getUsername();
-
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo();
+        if (!(token instanceof JwtToken)) {
+            return null;
+        }
+        JwtToken jwtToken = (JwtToken) token;
+        String jwt = (String) jwtToken.getCredentials();
+        String subject = null;
+        try {
+            Claims claims = JwtUtil.parserJWT(jwt);
+            subject = claims.getSubject();
+        } catch (MalformedJwtException e) {
+            throw new AuthenticationException("令牌格式错误");
+        } catch (Exception e) {
+            throw new AuthenticationException("令牌无效");
+        }
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo("jwt:" + subject, jwt, this.getName());
         return info;
     }
 }

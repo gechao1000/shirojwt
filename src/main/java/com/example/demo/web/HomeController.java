@@ -1,5 +1,6 @@
 package com.example.demo.web;
 
+import com.example.demo.util.JwtUtil;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +17,12 @@ public class HomeController {
 
 
     @GetMapping("/token")
-    public Map token() {
-        return null;
+    public String token() {
+        return JwtUtil.issueJWT();
+    }
+
+    @GetMapping("/index")
+    public String index() {
+        return "@index";
     }
 }
